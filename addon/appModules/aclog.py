@@ -1,11 +1,17 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2021 Alberto Buffolino, released under GPL
+# Copyright 2021 Alberto Buffolino, released under GPLv2
 
 import appModuleHandler
 import controlTypes as ct
 import winUser
 from NVDAObjects.IAccessible import IAccessible, MenuItem
 from keyboardHandler import KeyboardInputGesture as InputGesture
+
+# for pre-2022.1 compatibility
+if hasattr(ct, 'Role'):
+	roles = ct.Role
+else:
+	roles = type('Enum', (), dict([(x.split("ROLE_")[1], getattr(ct, x)) for x in dir(ct) if x.startswith("ROLE_")]))
 
 """Useful links:
 - Combobox messages and their meaning:
@@ -29,13 +35,13 @@ CB_ERR = -1
 class AppModule(appModuleHandler.AppModule):
 
 	def chooseNVDAObjectOverlayClasses(self, obj, clsList):
-		if obj.role == ct.ROLE_COMBOBOX:
+		if obj.role == roles.COMBOBOX:
 			clsList.insert(0, ACLogCombobox)
-		elif obj.role == ct.ROLE_EDITABLETEXT and obj.simpleParent.role == ct.ROLE_COMBOBOX:
+		elif obj.role == roles.EDITABLETEXT and obj.simpleParent.role == roles.COMBOBOX:
 			clsList.insert(0, ACLogEditCombobox)
-		elif obj.role == ct.ROLE_STATICTEXT:
+		elif obj.role == roles.STATICTEXT:
 			clsList.insert(0, ACLogStaticText)
-		elif obj.role == ct.ROLE_MENUITEM:
+		elif obj.role == roles.MENUITEM:
 			clsList.insert(0, ACLogMenuItem)
 
 
@@ -112,14 +118,14 @@ class ACLogMenuItem(MenuItem):
 		self.bindGesture("kb:escape", "closeMenu")
 
 	def script_exploreMenu(self, gesture):
-		if not self.childCount and self.parent.role == ct.ROLE_MENUBAR:
+		if not self.childCount and self.parent.role == roles.MENUBAR:
 			# avoid to focus out of menu
 			return
 		gesture.send()
 
 	def script_closeMenu(self, gesture):
 		gesture.send()
-		if self.parent.role != ct.ROLE_MENUBAR:
+		if self.parent.role != roles.MENUBAR:
 			# esc on internal menuitems not hides menubar, so...
 			InputGesture.fromName("alt").send()
 

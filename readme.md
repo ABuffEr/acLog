@@ -19,4 +19,4 @@ Add-on author is not an usual user of ACLog. So, if you find problems with this 
 
 [aclog]: https://n3fjp.com
 [here]: https://github.com/ABuffEr/acLog/issues
-[stable]: https://github.com/ABuffEr/acLog/releases/download/v1.0/acLog-1.0.nvda-addon
+[stable]: https://github.com/ABuffEr/acLog/releases/download/v1.1/acLog-1.1.nvda-addon
